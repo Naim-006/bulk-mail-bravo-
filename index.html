@@ -1,507 +1,722 @@
-<html lang="en"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Nexus | Professional Email Campaign Studio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'sans': ['Inter', 'system-ui', 'sans-serif'],
-                        'mono': ['JetBrains Mono', 'monospace'],
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'shimmer': 'shimmer 2s linear infinite',
-                    },
-                    keyframes: {
-                        shimmer: {
-                            '0%': { backgroundPosition: '-200% 0' },
-                            '100%': { backgroundPosition: '200% 0' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
-        .glass-panel { backdrop-filter: blur(12px); background: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(226,232,240,0.8); }
-        .editor-container { transition: all 0.2s ease; }
-        .sidebar-item.active { background: #f1f5f9; color: #0f172a; font-weight: 500; border-left: 3px solid #2563eb; }
-        .scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
-        .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .toast-message { animation: slideInUp 0.3s ease forwards; }
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
-        .status-dot.idle { background: #94a3b8; box-shadow: 0 0 0 0 #94a3b8; }
-        .status-dot.sending { background: #3b82f6; animation: pulse 1.5s infinite; }
-        .status-dot.completed { background: #10b981; }
-        @keyframes pulse { 0% { opacity: 0.4; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
-        .progress-gradient { background: linear-gradient(90deg, #2563eb, #60a5fa); }
-        .code-editor:focus { outline: none; }
-        .settings-transition { transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
-    </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:JetBrains Mono, monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.bottom-6{bottom:1.5rem}.left-0{left:0px}.right-6{right:1.5rem}.top-0{top:0px}.bottom-8{bottom:2rem}.left-7{left:1.75rem}.right-0{right:0px}.right-7{right:1.75rem}.z-10{z-index:10}.z-20{z-index:20}.z-\[100\]{z-index:100}.z-\[200\]{z-index:200}.z-50{z-index:50}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-0\.5{margin-bottom:0.125rem}.mb-10{margin-bottom:2.5rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.mb-2{margin-bottom:0.5rem}.mb-8{margin-bottom:2rem}.mt-1{margin-top:0.25rem}.mt-3{margin-top:0.75rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1{height:0.25rem}.h-2{height:0.5rem}.h-20{height:5rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[520px\]{height:520px}.h-full{height:100%}.h-screen{height:100vh}.w-0{width:0px}.w-2{width:0.5rem}.w-20{width:5rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-80{width:20rem}.w-9{width:2.25rem}.w-full{width:100%}.w-px{width:1px}.w-8{width:2rem}.w-96{width:24rem}.max-w-5xl{max-width:64rem}.flex-1{flex:1 1 0%}.translate-x-full{--tw-translate-x:100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes ping{75%, 100%{transform:scale(2);opacity:0}}.animate-ping{animation:ping 1s cubic-bezier(0, 0, 0.2, 1) infinite}.resize-none{resize:none}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-7 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.75rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-xl{border-radius:0.75rem}.rounded-r-full{border-top-right-radius:9999px;border-bottom-right-radius:9999px}.border{border-width:1px}.border-0{border-width:0px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-l{border-left-width:1px}.border-none{border-style:none}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.bg-slate-50\/80{background-color:rgb(248 250 252 / 0.8)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/60{background-color:rgb(255 255 255 / 0.6)}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-600{--tw-gradient-from:#2563eb var(--tw-gradient-from-position);--tw-gradient-to:rgb(37 99 235 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-slate-800{--tw-gradient-from:#1e293b var(--tw-gradient-from-position);--tw-gradient-to:rgb(30 41 59 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-slate-600{--tw-gradient-to:#475569 var(--tw-gradient-to-position)}.bg-clip-text{-webkit-background-clip:text;background-clip:text}.p-0{padding:0px}.p-2\.5{padding:0.625rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-3{padding:0.75rem}.p-7{padding:1.75rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-7{padding-left:1.75rem;padding-right:1.75rem}.px-8{padding-left:2rem;padding-right:2rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pt-8{padding-top:2rem}.pt-4{padding-top:1rem}.font-mono{font-family:JetBrains Mono, monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[15px\]{font-size:15px}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-emerald-500{--tw-text-opacity:1;color:rgb(16 185 129 / var(--tw-text-opacity, 1))}.text-indigo-400{--tw-text-opacity:1;color:rgb(129 140 248 / var(--tw-text-opacity, 1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.text-rose-500{--tw-text-opacity:1;color:rgb(244 63 94 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.text-transparent{color:transparent}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.placeholder-slate-400::placeholder{--tw-placeholder-opacity:1;color:rgb(148 163 184 / var(--tw-placeholder-opacity, 1))}.opacity-75{opacity:0.75}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-slate-200{--tw-shadow-color:#e2e8f0;--tw-shadow:var(--tw-shadow-colored)}.outline-none{outline:2px solid transparent;outline-offset:2px}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.ease-out{transition-timing-function:cubic-bezier(0, 0, 0.2, 1)}.hover\:bg-slate-100:hover{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-800:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.hover\:text-slate-700:hover{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.hover\:text-slate-800:hover{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:ring-0:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500\/20:focus{--tw-ring-color:rgb(59 130 246 / 0.2)}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@media (min-width: 1024px){.lg\:block{display:block}.lg\:w-72{width:18rem}.lg\:items-start{align-items:flex-start}.lg\:p-8{padding:2rem}}</style></head>
-<body class="text-slate-800 antialiased overflow-hidden h-screen">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Brevo Bulk Email System | Professional Communication Suite</title>
+  <style>
+    /* ---------- RESET & PROFESSIONAL BASE ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    <!-- Floating Toast Container -->
-    <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-2"></div>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f1f5f9;
+      line-height: 1.5;
+      padding: 2rem 1rem;
+    }
 
-    <!-- Top Progress Bar with gradient effect -->
-    <div class="fixed top-0 left-0 w-full h-1 bg-slate-100 z-[200]">
-        <div id="progress-bar" class="h-full progress-gradient w-0 transition-all duration-300 ease-out rounded-r-full"></div>
+    /* Main Container */
+    .app-container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #0f172a;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+    }
+    .header p {
+      color: #475569;
+      font-size: 0.9rem;
+    }
+
+    /* Grid Layout */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2col {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      body {
+        padding: 1rem;
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .card-header {
+      padding: 1rem 1.5rem;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .card-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0f172a;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #334155;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.625rem 0.875rem;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      transition: all 0.15s;
+      color: #0f172a;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    textarea {
+      resize: vertical;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    .helper-text {
+      font-size: 0.7rem;
+      color: #64748b;
+      margin-top: 0.375rem;
+    }
+    .range-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .range-row input {
+      flex: 1;
+    }
+    .range-separator {
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 0.5rem;
+      transition: all 0.15s;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: #0f172a;
+      color: white;
+      width: 100%;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: #1e293b;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+      width: 100%;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: #e2e8f0;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+    }
+    .btn-outline:hover:not(:disabled) {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: #dc2626;
+    }
+    .btn-sm {
+      padding: 0.375rem 0.875rem;
+      font-size: 0.8rem;
+    }
+    .btn-block {
+      width: 100%;
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Preview Panel */
+    .preview-panel {
+      margin-top: 1.5rem;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 1.5rem;
+    }
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .preview-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+    .preview-container {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      min-height: 300px;
+    }
+    iframe {
+      width: 100%;
+      height: 320px;
+      border: none;
+      background: white;
+    }
+
+    /* Progress & Logs */
+    .progress-section {
+      margin-top: 1.5rem;
+      background: #f8fafc;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+    }
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #475569;
+      margin-bottom: 0.5rem;
+    }
+    .progress-bar-wrapper {
+      background: #e2e8f0;
+      border-radius: 9999px;
+      height: 0.5rem;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .progress-bar {
+      background: #0f172a;
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 9999px;
+    }
+    .log-area {
+      background: #0f172a;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.7rem;
+    }
+    .log-entry {
+      padding: 0.25rem 0;
+      border-bottom: 1px solid #1e293b;
+      color: #cbd5e1;
+    }
+    .log-success {
+      color: #4ade80;
+    }
+    .log-error {
+      color: #f87171;
+    }
+    .log-info {
+      color: #60a5fa;
+    }
+
+    /* Info Bar */
+    .info-bar {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 0.875rem 1rem;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: #475569;
+      text-align: center;
+    }
+    .info-bar strong {
+      color: #0f172a;
+    }
+
+    /* Sender Preview */
+    .sender-preview {
+      background: #f1f5f9;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 0.75rem;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 1rem 0;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <h1>Brevo Bulk Communication Suite</h1>
+    <p>Transactional email delivery • Student ID range support • Professional interface</p>
+  </div>
+
+  <!-- Sender Preview -->
+  <div class="sender-preview" id="senderPreviewBar">
+    <strong>Sender Identity:</strong> <span id="senderNameDisplay">DIU Class Tracker</span> &lt;hossiannaim1967@gmail.com&gt;
+  </div>
+
+  <div class="grid-2col">
+    <!-- Bulk Range Panel -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Bulk Delivery by Student ID</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>ID Range (Batch-Section-Roll)</label>
+          <div class="range-row">
+            <input type="text" id="rangeStart" placeholder="253-15-001" value="253-15-001">
+            <span class="range-separator">—</span>
+            <input type="text" id="rangeEnd" placeholder="253-15-050" value="253-15-050">
+          </div>
+          <div class="helper-text">Format: batch-section-roll (example: 253-15-001)</div>
+        </div>
+        <div class="form-group">
+          <label>Email Domain</label>
+          <input type="text" id="emailDomain" value="@diu.edu.bd" placeholder="@student.diu.edu.bd">
+          <div class="helper-text">Automatically appended to each student ID</div>
+        </div>
+        <button id="bulkSendBtn" class="btn btn-primary">Send to Range</button>
+        <button id="previewRangeBtn" class="btn btn-secondary" style="margin-top: 0.5rem;">Preview Recipient List</button>
+      </div>
     </div>
 
-    <div class="flex h-full">
-        <!-- Enhanced Sidebar -->
-        <aside class="w-20 lg:w-72 bg-white border-r border-slate-200 flex flex-col items-center lg:items-start p-5 shadow-sm z-10">
-            <div class="flex items-center gap-3 mb-10 px-2">
-                <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sparkles" aria-hidden="true" class="lucide lucide-sparkles text-white w-4.5 h-4.5"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>
-                </div>
-                <span class="font-bold tracking-tight hidden lg:block text-xl bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Nexus Studio</span>
-            </div>
-            
-            <nav class="space-y-1.5 w-full">
-                <button id="nav-campaigns" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all group">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layers" aria-hidden="true" class="lucide lucide-layers w-5 h-5"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"></path><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"></path><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"></path></svg>
-                    <span class="hidden lg:block text-[15px] font-medium">Campaigns</span>
-                </button>
-                <button id="nav-analytics" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="bar-chart-3" aria-hidden="true" class="lucide lucide-bar-chart-3 w-5 h-5"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>
-                    <span class="hidden lg:block text-[15px] font-medium">Analytics</span>
-                </button>
-            </nav>
+    <!-- Single Email & Sender Settings -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Single Message & Sender Configuration</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>Custom Sender Name</label>
+          <input type="text" id="senderNameInput" value="DIU Class Tracker" placeholder="Your Organization Name">
+          <div class="helper-text">This name appears in recipients' inbox</div>
+        </div>
+        <div class="form-group">
+          <label>Test Recipient</label>
+          <input type="email" id="singleEmail" placeholder="recipient@example.com">
+        </div>
+        <button id="singleSendBtn" class="btn btn-primary">Send Test Message</button>
+      </div>
+    </div>
+  </div>
 
-            <div class="mt-auto w-full pt-8 border-t border-slate-100">
-                <button onclick="toggleSettings()" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="settings-2" aria-hidden="true" class="lucide lucide-settings-2 w-5 h-5"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
-                    <span class="hidden lg:block text-[15px] font-medium">Configuration</span>
-                </button>
-                <div class="mt-4 px-2 hidden lg:block">
-                    <div class="text-[11px] text-slate-400 font-mono">READY v2.0</div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Workspace -->
-        <main class="flex-1 flex flex-col overflow-hidden relative">
-            <!-- Glassmorphic Header -->
-            <header class="glass-panel h-20 flex items-center justify-between px-8 sticky top-0 z-20">
-                <div>
-                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Active Draft</p>
-                    <input type="text" id="campaign-title" value="Spring 2025 · Academic Outreach" class="bg-transparent border-none focus:ring-0 font-bold text-xl p-0 w-80 text-slate-800 placeholder-slate-400">
-                </div>
-                <div class="flex items-center gap-3">
-                    <button id="preview-mode-toggle" onclick="togglePreviewEditor()" class="p-2.5 text-slate-500 hover:text-slate-800 rounded-full hover:bg-slate-100 transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="eye" aria-hidden="true" class="lucide lucide-eye w-5 h-5"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    </button>
-                    <div class="h-8 w-px bg-slate-200 mx-1"></div>
-                    <button id="launch-btn" class="bg-slate-900 hover:bg-slate-800 text-white px-7 py-2.5 rounded-full text-sm font-semibold flex items-center gap-2 transition-all shadow-lg shadow-slate-200 active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="rocket" aria-hidden="true" class="lucide lucide-rocket w-4 h-4"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"></path><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"></path></svg>
-                        <span>Launch Campaign</span>
-                    </button>
-                </div>
-            </header>
-
-            <!-- Dynamic Stats + Editor Container -->
-            <div class="flex-1 overflow-y-auto p-6 lg:p-8 scrollbar-thin">
-                <div class="max-w-5xl mx-auto flex flex-col gap-6">
-                    <!-- Real-time Stats Cards -->
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Delivered</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="mail-check" aria-hidden="true" class="lucide lucide-mail-check w-4 h-4 text-emerald-500"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8"></path><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path><path d="m16 19 2 2 4-4"></path></svg>
-                            </div>
-                            <p id="count-success" class="text-2xl font-bold mt-2 text-slate-800">0</p>
-                            <span class="text-[10px] text-slate-400">successful sends</span>
-                        </div>
-                        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Bounced</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="mail-x" aria-hidden="true" class="lucide lucide-mail-x w-4 h-4 text-rose-400"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h9"></path><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path><path d="m17 17 4 4"></path><path d="m21 17-4 4"></path></svg>
-                            </div>
-                            <p id="count-error" class="text-2xl font-bold mt-2 text-rose-500">0</p>
-                            <span class="text-[10px] text-slate-400">failed delivery</span>
-                        </div>
-                        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Open Rate</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trending-up" aria-hidden="true" class="lucide lucide-trending-up w-4 h-4 text-indigo-400"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg>
-                            </div>
-                            <p id="open-rate" class="text-2xl font-bold mt-2 text-slate-800">0%</p>
-                            <span class="text-[10px] text-slate-400">simulated analytics</span>
-                        </div>
-                    </div>
-
-                    <!-- Main Editor Card -->
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden transition-all">
-                        <!-- Toolbar -->
-                        <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
-                            <div class="flex gap-5">
-                                <button onclick="setActiveEditor('code')" id="btn-code" class="text-sm font-semibold uppercase tracking-wide text-blue-600 flex items-center gap-1.5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="code-2" aria-hidden="true" class="lucide lucide-code-2 w-4 h-4"><path d="m18 16 4-4-4-4"></path><path d="m6 8-4 4 4 4"></path><path d="m14.5 4-5 16"></path></svg> Source
-                                </button>
-                                <button onclick="setActiveEditor('preview')" id="btn-preview-main" class="text-sm font-semibold uppercase tracking-wide text-slate-500 hover:text-slate-700 flex items-center gap-1.5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layout-dashboard" aria-hidden="true" class="lucide lucide-layout-dashboard w-4 h-4"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg> Live Preview
-                                </button>
-                            </div>
-                            <div class="flex items-center gap-2 bg-white/60 rounded-full px-3 py-1">
-                                <span class="relative flex h-2 w-2">
-                                    <span id="sync-led" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                                </span>
-                                <span id="sync-status" class="text-[11px] font-mono text-slate-500">Auto-sync</span>
-                            </div>
-                        </div>
-
-                        <!-- Dual-mode container -->
-                        <div class="relative h-[520px] bg-white">
-                            <textarea id="code-editor" class="code-editor absolute inset-0 w-full h-full p-6 font-mono text-sm leading-relaxed resize-none border-none focus:ring-0 bg-white text-slate-700" spellcheck="false">&lt;!DOCTYPE html&gt;
+  <!-- Global Email Content -->
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+      <h2>Email Content</h2>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <label>Subject Line</label>
+        <input type="text" id="globalSubject" value="Welcome to DIU Class Tracker - Campus Management System">
+      </div>
+      <div class="form-group">
+        <label>HTML Body</label>
+        <textarea id="htmlBody" rows="8">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
-&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;&lt;title&gt;Nexus Mail&lt;/title&gt;&lt;/head&gt;
-&lt;body style="margin:0;padding:0;background:#f1f5f9;font-family:'Inter',sans-serif;"&gt;
-  &lt;div style="max-width:580px;margin:30px auto;background:#ffffff;border-radius:32px;box-shadow:0 20px 35px -12px rgba(0,0,0,0.1);overflow:hidden;"&gt;
-    &lt;div style="background:linear-gradient(135deg,#0f172a,#1e293b);padding:32px 28px;text-align:center;"&gt;
-      &lt;h1 style="color:white;margin:0;font-size:26px;font-weight:700;"&gt;Nexus Intelligence&lt;/h1&gt;
-      &lt;p style="color:#94a3b8;margin-top:10px;"&gt;Academic &amp; Research Network&lt;/p&gt;
+&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;&lt;/head&gt;
+&lt;body style="margin:0; background:#f4f6f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;"&gt;
+  &lt;div style="max-width:560px; margin:30px auto; background:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);"&gt;
+    &lt;div style="background:#0f172a; padding:28px 24px; text-align:center;"&gt;
+      &lt;h2 style="color:#ffffff; margin:0; font-weight:500; letter-spacing:-0.3px;"&gt;DIU Class Tracker&lt;/h2&gt;
     &lt;/div&gt;
-    &lt;div style="padding:40px 32px;"&gt;
-      &lt;h2 style="font-size:20px;margin-top:0;color:#0f172a;"&gt;Exclusive Access Granted&lt;/h2&gt;
-      &lt;p style="color:#334155;line-height:1.5;"&gt;Your personalized dashboard for advanced analytics and collaborative tools is ready. Engage with real-time insights and premium resources.&lt;/p&gt;
-      &lt;div style="background:#f8fafc;padding:20px;border-radius:20px;margin:28px 0;"&gt;
-        &lt;p style="margin:0;font-weight:600;"&gt;🔗 Unique Resource Access&lt;/p&gt;
-        &lt;p style="font-size:13px;color:#475569;"&gt;Verify your institutional identity to proceed.&lt;/p&gt;
+    &lt;div style="padding:28px 24px;"&gt;
+      &lt;p style="color:#1e293b; font-size:15px; line-height:1.6; margin-bottom:20px;"&gt;Dear Student,&lt;/p&gt;
+      &lt;p style="color:#334155; font-size:15px; line-height:1.6; margin-bottom:24px;"&gt;We are pleased to introduce the DIU Class Tracker platform, a centralized solution for accessing academic schedules, examination updates, and performance analytics.&lt;/p&gt;
+      &lt;div style="background:#f8fafc; padding:16px; border-radius:12px; margin:20px 0;"&gt;
+        &lt;strong style="color:#0f172a; display:block; margin-bottom:8px;"&gt;Key Features&lt;/strong&gt;
+        &lt;ul style="color:#475569; font-size:14px; margin-left:20px;"&gt;
+          &lt;li&gt;Live class timetable &amp; venue updates&lt;/li&gt;
+          &lt;li&gt;Assignment &amp; examination notifications&lt;/li&gt;
+          &lt;li&gt;Grade and attendance dashboard&lt;/li&gt;
+        &lt;/ul&gt;
       &lt;/div&gt;
-      &lt;a href="#" style="background:#0f172a;display:inline-block;padding:12px 28px;border-radius:40px;color:white;text-decoration:none;font-weight:500;"&gt;Access Dashboard →&lt;/a&gt;
+      &lt;div style="text-align:center; margin:28px 0;"&gt;
+        &lt;a href="https://tracker.diu-cse-academic-tracker.com" style="background:#0f172a; color:white; text-decoration:none; padding:12px 28px; border-radius:40px; display:inline-block; font-weight:500;"&gt;Access Dashboard&lt;/a&gt;
+      &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div style="border-top:1px solid #e2e8f0;padding:20px;text-align:center;font-size:12px;color:#64748b;"&gt;© 2025 Nexus · Advanced Messaging&lt;/div&gt;
+    &lt;div style="background:#f8fafc; padding:20px; text-align:center; border-top:1px solid #e2e8f0;"&gt;
+      &lt;p style="color:#64748b; font-size:12px; margin:0;"&gt;DIU Class Tracker • Technical Support: Available via Help Desk&lt;/p&gt;
+    &lt;/div&gt;
   &lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</textarea>
-                            <iframe id="preview-frame" class="absolute inset-0 w-full h-full bg-white border-0 hidden"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- Campaign executive summary / live log -->
-                    <div class="bg-slate-50 rounded-xl border border-slate-200 p-4">
-                        <div class="flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="terminal" aria-hidden="true" class="lucide lucide-terminal w-4 h-4 text-slate-500"><path d="M12 19h8"></path><path d="m4 17 6-6-6-6"></path></svg>
-                            <span class="text-xs font-mono font-semibold text-slate-500">LIVE CAMPAIGN LOG</span>
-                        </div>
-                        <div id="status-text" class="text-sm font-mono text-slate-600 mt-2 flex items-center">
-                            <span class="status-dot idle" id="status-led"></span>
-                            <span id="log-message">Engine idle. Ready to launch campaign.</span>
-                        </div>
-                        <div class="mt-3 flex gap-4 text-[11px] text-slate-400">
-                            <span>⏱️ Rate: 1 msg/sec</span>
-                            <span>⚡ Throttle: Smart batch</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Advanced Slide-out Settings Panel -->
-            <div id="settings-panel" class="settings-transition fixed top-0 right-0 h-full w-96 bg-white border-l border-slate-200 shadow-2xl z-50 p-7 translate-x-full overflow-y-auto">
-                <div class="flex items-center justify-between mb-8">
-                    <h3 class="font-bold text-xl bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Campaign Engine</h3>
-                    <button onclick="toggleSettings()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x w-5 h-5 text-slate-500"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
-                </div>
-
-                <div class="space-y-7">
-                    <div>
-                        <label class="text-[11px] uppercase font-bold text-slate-500 block mb-2 tracking-wider">Recipient Domain 🌐</label>
-                        <input type="text" id="r-dom" value="@student.diu.edu.bd" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-[11px] uppercase font-bold text-slate-500 block mb-2">ID Prefix Start</label>
-                            <input type="text" id="r-start" value="253-15-001" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-[11px] uppercase font-bold text-slate-500 block mb-2">ID Prefix End</label>
-                            <input type="text" id="r-end" value="253-15-025" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-[11px] uppercase font-bold text-slate-500 block mb-2">Subject Line ✉️</label>
-                        <input type="text" id="s-sub" value="Important Academic Update: New Research Portal" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm">
-                    </div>
-                    <div>
-                        <label class="text-[11px] uppercase font-bold text-slate-500 block mb-2">SMTP / API Endpoint (Mock) 🔑</label>
-                        <input type="password" id="api-key" value="sk_live_nexus_mock_8f3a" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm">
-                        <p class="text-[10px] text-slate-400 mt-1">* Simulation environment — advanced rate limiting</p>
-                    </div>
-                    <div class="pt-4">
-                        <label class="text-[11px] uppercase font-bold text-slate-500 block mb-2">Advanced Tracking</label>
-                        <div class="flex items-center gap-2 bg-slate-50 rounded-xl p-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="activity" aria-hidden="true" class="lucide lucide-activity w-4 h-4 text-slate-500"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path></svg>
-                            <span class="text-sm text-slate-600">Open pixel + Click simulation</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="absolute bottom-8 left-7 right-7">
-                    <button onclick="resetCampaignStats()" class="w-full border border-slate-200 py-3 rounded-xl text-sm font-medium hover:bg-slate-50 transition">Reset Dashboard</button>
-                </div>
-            </div>
-        </main>
+        <div class="helper-text">Full HTML support • responsive templates • inline styles recommended</div>
+      </div>
+      <div class="button-group">
+        <button id="previewHtmlBtn" class="btn btn-secondary">Preview Design</button>
+        <button id="clearLogsBtn" class="btn btn-outline">Clear Logs</button>
+      </div>
     </div>
+  </div>
 
-    <script>
-        lucide.createIcons();
+  <!-- Preview Panel -->
+  <div class="preview-panel" id="previewPanel" style="display: none;">
+    <div class="preview-header">
+      <span class="preview-title">Live Preview — HTML Rendering</span>
+    </div>
+    <div class="preview-container">
+      <iframe id="previewIframe" title="Email Preview" sandbox="allow-same-origin allow-popups"></iframe>
+    </div>
+  </div>
 
-        // DOM elements
-        let activeView = 'code';
-        let isSending = false;
-        let cancelFlag = false;
-        let currentInterval = null;
-        let sentCount = 0, bounceCount = 0;
+  <!-- Progress & Logs -->
+  <div class="progress-section" id="progressSection" style="display: none;">
+    <div class="progress-stats">
+      <span id="progressText">Preparing batch</span>
+      <span id="counterText">0 / 0</span>
+    </div>
+    <div class="progress-bar-wrapper">
+      <div class="progress-bar" id="progressFill"></div>
+    </div>
+    <div class="log-area" id="logArea">
+      <div class="log-entry log-info">System ready • Configure sender name and content</div>
+    </div>
+  </div>
 
-        const codeEditor = document.getElementById('code-editor');
-        const previewIframe = document.getElementById('preview-frame');
-        const btnCode = document.getElementById('btn-code');
-        const btnPreview = document.getElementById('btn-preview-main');
-        const campaignTitle = document.getElementById('campaign-title');
-        const launchBtn = document.getElementById('launch-btn');
+  <div class="info-bar">
+    <strong>Delivery Information</strong> — Sender email: hossiannaim1967@gmail.com (verified in Brevo) • 2-second interval between messages ensures API rate limit compliance • Supports up to 100 emails per batch
+  </div>
+</div>
 
-        // Helper: update preview content
-        function updatePreview() {
-            const doc = previewIframe.contentDocument || previewIframe.contentWindow.document;
-            doc.open();
-            doc.write(codeEditor.value);
-            doc.close();
-        }
+<script>
+  // ======================= CONFIGURATION =======================
+  const BREVO_API_KEY = "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";
+  const SENDER_EMAIL = "hnayeem005@gmail.com";
+  const BREVO_ENDPOINT = "https://api.brevo.com/v3/smtp/email";
 
-        window.setActiveEditor = function(type) {
-            activeView = type;
-            if(type === 'code') {
-                codeEditor.classList.remove('hidden');
-                previewIframe.classList.add('hidden');
-                btnCode.classList.add('text-blue-600');
-                btnCode.classList.remove('text-slate-500');
-                btnPreview.classList.remove('text-blue-600');
-                btnPreview.classList.add('text-slate-500');
-            } else {
-                updatePreview();
-                codeEditor.classList.add('hidden');
-                previewIframe.classList.remove('hidden');
-                btnPreview.classList.add('text-blue-600');
-                btnPreview.classList.remove('text-slate-500');
-                btnCode.classList.remove('text-blue-600');
-                btnCode.classList.add('text-slate-500');
-            }
-        };
+  // DOM Elements
+  const rangeStart = document.getElementById('rangeStart');
+  const rangeEnd = document.getElementById('rangeEnd');
+  const emailDomain = document.getElementById('emailDomain');
+  const bulkSendBtn = document.getElementById('bulkSendBtn');
+  const previewRangeBtn = document.getElementById('previewRangeBtn');
+  const singleEmail = document.getElementById('singleEmail');
+  const singleSendBtn = document.getElementById('singleSendBtn');
+  const globalSubject = document.getElementById('globalSubject');
+  const htmlBody = document.getElementById('htmlBody');
+  const previewHtmlBtn = document.getElementById('previewHtmlBtn');
+  const previewPanel = document.getElementById('previewPanel');
+  const previewIframe = document.getElementById('previewIframe');
+  const progressSection = document.getElementById('progressSection');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  const counterText = document.getElementById('counterText');
+  const logArea = document.getElementById('logArea');
+  const clearLogsBtn = document.getElementById('clearLogsBtn');
+  const senderNameInput = document.getElementById('senderNameInput');
+  const senderNameDisplay = document.getElementById('senderNameDisplay');
 
-        window.togglePreviewEditor = function() {
-            if(activeView === 'code') setActiveEditor('preview');
-            else setActiveEditor('code');
-        };
+  let isSending = false;
+  let cancelFlag = false;
 
-        // Auto-save simulation & sync status
-        let typingTimer;
-        codeEditor.addEventListener('input', () => {
-            document.getElementById('sync-status').innerHTML = '● Editing...';
-            document.getElementById('sync-led').classList.remove('opacity-75');
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(() => {
-                if(activeView === 'preview') updatePreview();
-                document.getElementById('sync-status').innerHTML = '● Synced';
-                document.getElementById('sync-led').classList.add('opacity-75');
-            }, 800);
-        });
+  function updateSenderPreview() {
+    const name = senderNameInput.value.trim() || "DIU Class Tracker";
+    senderNameDisplay.textContent = name;
+  }
+  senderNameInput.addEventListener('input', updateSenderPreview);
+  updateSenderPreview();
 
-        // Settings slideout
-        window.toggleSettings = function() {
-            const panel = document.getElementById('settings-panel');
-            panel.classList.toggle('translate-x-full');
-        };
+  function addLog(message, type = 'info') {
+    const entry = document.createElement('div');
+    entry.className = `log-entry log-${type}`;
+    entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+    logArea.appendChild(entry);
+    entry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 
-        // Generate email list based on range
-        function generateRecipients() {
-            const startRaw = document.getElementById('r-start').value;
-            const endRaw = document.getElementById('r-end').value;
-            const domain = document.getElementById('r-dom').value;
-            const prefixMatch = startRaw.match(/^(\D*\d+\D*)?(\d+)$/);
-            const endMatch = endRaw.match(/^(\D*\d+\D*)?(\d+)$/);
-            
-            let startNum, endNum, prefix = "";
-            if(prefixMatch && endMatch) {
-                const startStr = startRaw;
-                const numericStart = startStr.match(/\d+$/)?.[0];
-                const numericEnd = endRaw.match(/\d+$/)?.[0];
-                if(numericStart && numericEnd) {
-                    startNum = parseInt(numericStart);
-                    endNum = parseInt(numericEnd);
-                    prefix = startRaw.slice(0, startRaw.lastIndexOf(numericStart));
-                } else {
-                    throw new Error("Invalid format");
-                }
-            } else {
-                const startParts = startRaw.split('-');
-                const endParts = endRaw.split('-');
-                if(startParts.length >= 3 && endParts.length >= 3) {
-                    startNum = parseInt(startParts[2]);
-                    endNum = parseInt(endParts[2]);
-                    prefix = startParts.slice(0,2).join('-') + '-';
-                } else throw new Error("Use format like 253-15-001");
-            }
-            
-            if(isNaN(startNum) || isNaN(endNum) || startNum > endNum) throw new Error("Invalid range");
-            const recipients = [];
-            for(let i=startNum; i<=endNum; i++) {
-                const padded = i.toString().padStart(3, '0');
-                recipients.push(prefix + padded + domain);
-            }
-            return recipients;
-        }
+  function clearLogs() {
+    logArea.innerHTML = '<div class="log-entry log-info">Logs cleared • ready for new operation</div>';
+  }
 
-        // Show toast notifications
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast-message bg-white rounded-xl shadow-lg border-l-4 ${type === 'success' ? 'border-emerald-500' : type === 'error' ? 'border-rose-500' : 'border-blue-500'} px-4 py-3 flex items-center gap-3 min-w-[260px] text-sm`;
-            toast.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info'}" class="w-4 h-4 ${type === 'success' ? 'text-emerald-500' : type === 'error' ? 'text-rose-500' : 'text-blue-500'}"></i><span class="text-slate-700">${message}</span>`;
-            container.appendChild(toast);
-            lucide.createIcons({ icons: { 'check-circle': true, 'alert-circle': true, 'info': true } });
-            setTimeout(() => toast.remove(), 2800);
-        }
+  function showToast(message, isError = false) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: ${isError ? '#ef4444' : '#0f172a'}; color: white;
+      padding: 10px 20px; border-radius: 40px; font-size: 0.8rem;
+      z-index: 10000; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      max-width: 90vw; text-align: center; pointer-events: none;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  }
 
-        // Reset stats via settings
-        window.resetCampaignStats = function() {
-            if(isSending) {
-                showToast("Stop campaign before resetting", "error");
-                return;
-            }
-            sentCount = 0; bounceCount = 0;
-            document.getElementById('count-success').innerText = "0";
-            document.getElementById('count-error').innerText = "0";
-            document.getElementById('open-rate').innerText = "0%";
-            document.getElementById('progress-bar').style.width = '0%';
-            document.getElementById('log-message').innerHTML = "Stats reset. Ready.";
-            document.getElementById('status-led').className = "status-dot idle";
-            showToast("Campaign metrics cleared", "success");
-        };
+  function parseStudentId(idStr) {
+    const parts = idStr.trim().split('-');
+    if (parts.length !== 3) return null;
+    const batch = parts[0];
+    const section = parts[1];
+    const rollNum = parseInt(parts[2], 10);
+    if (isNaN(rollNum)) return null;
+    const paddingLen = parts[2].length;
+    return { batch, section, rollNum, paddingLen };
+  }
 
-        function updateStatsUI() {
-            document.getElementById('count-success').innerText = sentCount;
-            document.getElementById('count-error').innerText = bounceCount;
-            const total = sentCount + bounceCount;
-            const openSimulated = total > 0 ? Math.min(98, Math.floor((sentCount / total) * 85 + 5)) : 0;
-            document.getElementById('open-rate').innerText = openSimulated + "%";
-        }
+  function formatRoll(num, padding) {
+    return String(num).padStart(padding, '0');
+  }
 
-        // Simulate send with random success rate (94-100% delivery)
-        async function sendMockEmail(recipient, subject, htmlContent) {
-            await new Promise(r => setTimeout(r, 350 + Math.random() * 200));
-            const isSuccess = Math.random() > 0.06;
-            if(isSuccess) {
-                return { status: 'delivered', recipient };
-            } else {
-                return { status: 'bounced', recipient };
-            }
-        }
+  function generateEmails(startId, endId, domain) {
+    const start = parseStudentId(startId);
+    const end = parseStudentId(endId);
+    if (!start || !end) throw new Error("Invalid ID format. Use: 253-15-001");
+    if (start.batch !== end.batch || start.section !== end.section) {
+      throw new Error("Batch and section must match in range");
+    }
+    if (start.rollNum > end.rollNum) throw new Error("Start roll must be <= end roll");
+    const emails = [];
+    for (let r = start.rollNum; r <= end.rollNum; r++) {
+      const roll = formatRoll(r, start.paddingLen);
+      emails.push(`${start.batch}-${start.section}-${roll}${domain}`);
+    }
+    return emails;
+  }
 
-        async function startCampaign() {
-            if(isSending) {
-                // Stop campaign
-                cancelFlag = true;
-                if(currentInterval) clearInterval(currentInterval);
-                isSending = false;
-                launchBtn.innerHTML = '<i data-lucide="rocket" class="w-4 h-4"></i><span>Launch Campaign</span>';
-                launchBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
-                launchBtn.classList.add('bg-slate-900', 'hover:bg-slate-800');
-                document.getElementById('status-led').className = "status-dot idle";
-                document.getElementById('log-message').innerHTML = "⏸️ Campaign aborted by user.";
-                showToast("Campaign stopped", "info");
-                cancelFlag = false;
-                return;
-            }
+  async function sendSingleEmail(recipient, subject, htmlContent, senderName) {
+    const payload = {
+      sender: { email: SENDER_EMAIL, name: senderName || "DIU Class Tracker" },
+      to: [{ email: recipient, name: recipient.split('@')[0] }],
+      subject: subject,
+      htmlContent: htmlContent,
+      textContent: "HTML email content - please enable HTML view"
+    };
+    try {
+      const response = await fetch(BREVO_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'api-key': BREVO_API_KEY },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (response.ok) return { success: true };
+      return { success: false, error: data.message || `HTTP ${response.status}` };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  }
 
-            try {
-                const recipients = generateRecipients();
-                if(recipients.length === 0) throw new Error("No valid recipients");
-                const subject = document.getElementById('s-sub').value.trim() || "Important Update";
-                const emailHTML = codeEditor.value;
-                
-                cancelFlag = false;
-                isSending = true;
-                sentCount = 0;
-                bounceCount = 0;
-                updateStatsUI();
-                document.getElementById('progress-bar').style.width = '0%';
-                launchBtn.innerHTML = '<i data-lucide="stop-circle" class="w-4 h-4"></i><span>Stop Campaign</span>';
-                launchBtn.classList.remove('bg-slate-900');
-                launchBtn.classList.add('bg-red-600', 'hover:bg-red-700');
-                document.getElementById('status-led').className = "status-dot sending";
-                document.getElementById('log-message').innerHTML = `⚡ Launching to ${recipients.length} recipients...`;
-                showToast(`Campaign started: ${recipients.length} contacts`, "success");
+  async function sendBulk(emails, subject, html, senderName) {
+    let successCount = 0, failCount = 0;
+    const total = emails.length;
+    progressSection.style.display = 'block';
+    progressFill.style.width = '0%';
+    progressText.textContent = 'Sending batch...';
+    counterText.textContent = `0/${total}`;
 
-                for(let idx = 0; idx < recipients.length; idx++) {
-                    if(cancelFlag) break;
-                    const rec = recipients[idx];
-                    document.getElementById('log-message').innerHTML = `📤 Sending to ${rec} ...`;
-                    const result = await sendMockEmail(rec, subject, emailHTML);
-                    if(result.status === 'delivered') {
-                        sentCount++;
-                        document.getElementById('log-message').innerHTML = `✅ Delivered: ${rec}`;
-                    } else {
-                        bounceCount++;
-                        document.getElementById('log-message').innerHTML = `⚠️ Bounced: ${rec}`;
-                    }
-                    updateStatsUI();
-                    const percent = ((idx + 1) / recipients.length) * 100;
-                    document.getElementById('progress-bar').style.width = percent + '%';
-                }
-                
-                if(!cancelFlag) {
-                    document.getElementById('log-message').innerHTML = `🏁 Campaign Finalized: ${sentCount} delivered, ${bounceCount} failed.`;
-                    document.getElementById('status-led').className = "status-dot completed";
-                    showToast(`Campaign completed: ${sentCount} successful emails`, "success");
-                } else {
-                    document.getElementById('status-led').className = "status-dot idle";
-                }
-            } catch(err) {
-                showToast(err.message, "error");
-                document.getElementById('log-message').innerHTML = `❌ Error: ${err.message}`;
-            } finally {
-                if(!cancelFlag) {
-                    isSending = false;
-                    launchBtn.innerHTML = '<i data-lucide="rocket" class="w-4 h-4"></i><span>Launch Campaign</span>';
-                    launchBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
-                    launchBtn.classList.add('bg-slate-900', 'hover:bg-slate-800');
-                } else {
-                    isSending = false;
-                    cancelFlag = false;
-                }
-                if(activeView === 'preview') updatePreview();
-            }
-        }
+    for (let i = 0; i < emails.length; i++) {
+      if (cancelFlag) {
+        addLog(`Batch cancelled after ${successCount + failCount} messages`, 'error');
+        break;
+      }
+      const percent = Math.round(((i + 1) / total) * 100);
+      progressFill.style.width = `${percent}%`;
+      counterText.textContent = `${i + 1}/${total}`;
+      progressText.textContent = `Processing: ${emails[i]}`;
+      
+      addLog(`Sending to ${emails[i]}`, 'info');
+      const result = await sendSingleEmail(emails[i], subject, html, senderName);
+      if (result.success) {
+        successCount++;
+        addLog(`Delivered: ${emails[i]}`, 'success');
+      } else {
+        failCount++;
+        addLog(`Failed: ${emails[i]} - ${result.error}`, 'error');
+      }
+      if (i < emails.length - 1) await new Promise(r => setTimeout(r, 2000));
+    }
+    progressText.textContent = `Completed: ${successCount} delivered, ${failCount} failed`;
+    addLog(`Batch finished — ${successCount} successful, ${failCount} errors`, successCount > 0 ? 'success' : 'error');
+    return { successCount, failCount };
+  }
 
-        launchBtn.addEventListener('click', startCampaign);
-        
-        // Initialize preview
-        setActiveEditor('code');
-        updatePreview();
-        
-        // Sidebar basic highlight simulation
-        document.getElementById('nav-campaigns').addEventListener('click', () => showToast("Campaign dashboard ready", "info"));
-        document.getElementById('nav-analytics').addEventListener('click', () => showToast("Analytics: simulated open rates & CTR", "info"));
-        
-        // Sync settings when typing subject
-        const subjectInput = document.getElementById('s-sub');
-        subjectInput.addEventListener('input', () => { /* nothing special */ });
-        
-        // update preview when editor changes for safety
-        setInterval(() => { if(activeView === 'preview') updatePreview(); }, 2000);
-    </script>
+  // Single message handler
+  singleSendBtn.addEventListener('click', async () => {
+    const recipient = singleEmail.value.trim();
+    const subject = globalSubject.value.trim();
+    const html = htmlBody.value.trim();
+    const senderName = senderNameInput.value.trim() || "DIU Class Tracker";
+    if (!recipient || !recipient.includes('@')) { showToast("Valid recipient email required", true); return; }
+    if (!subject) { showToast("Subject line required", true); return; }
+    if (!html) { showToast("HTML content required", true); return; }
+    
+    singleSendBtn.disabled = true;
+    singleSendBtn.innerHTML = 'Sending...';
+    addLog(`Test message to ${recipient} from "${senderName}"`, 'info');
+    const result = await sendSingleEmail(recipient, subject, html, senderName);
+    singleSendBtn.disabled = false;
+    singleSendBtn.innerHTML = 'Send Test Message';
+    if (result.success) {
+      showToast(`Message sent to ${recipient}`);
+      addLog(`Test successful: ${recipient}`, 'success');
+    } else {
+      showToast(`Failed: ${result.error}`, true);
+      addLog(`Test failed: ${result.error}`, 'error');
+    }
+  });
 
-</body></html>
+  // Bulk handler with cancel support
+  bulkSendBtn.addEventListener('click', async () => {
+    if (isSending) {
+      cancelFlag = true;
+      bulkSendBtn.textContent = 'Send to Range';
+      bulkSendBtn.classList.remove('btn-danger');
+      bulkSendBtn.classList.add('btn-primary');
+      isSending = false;
+      addLog("Cancellation requested — finishing current operation", 'info');
+      return;
+    }
+    const start = rangeStart.value.trim();
+    const end = rangeEnd.value.trim();
+    const domain = emailDomain.value.trim();
+    const subject = globalSubject.value.trim();
+    const html = htmlBody.value.trim();
+    const senderName = senderNameInput.value.trim() || "DIU Class Tracker";
+    if (!start || !end) { showToast("Fill start and end range", true); return; }
+    if (!domain.startsWith('@')) { showToast("Domain must start with @", true); return; }
+    if (!subject || !html) { showToast("Subject and HTML body required", true); return; }
+    
+    let emails = [];
+    try {
+      emails = generateEmails(start, end, domain);
+      if (emails.length === 0) throw new Error("No recipients generated");
+      if (emails.length > 150 && !confirm(`You are about to send ${emails.length} messages. Continue?`)) return;
+    } catch (err) { showToast(err.message, true); return; }
+    
+    isSending = true;
+    cancelFlag = false;
+    bulkSendBtn.textContent = 'Cancel Sending';
+    bulkSendBtn.classList.remove('btn-primary');
+    bulkSendBtn.classList.add('btn-danger');
+    singleSendBtn.disabled = true;
+    previewRangeBtn.disabled = true;
+    clearLogs();
+    addLog(`Starting batch to ${emails.length} recipients from "${senderName}"`, 'info');
+    addLog(`Sample recipients: ${emails.slice(0, 3).join(', ')}${emails.length > 3 ? '...' : ''}`, 'info');
+    
+    await sendBulk(emails, subject, html, senderName);
+    
+    isSending = false;
+    bulkSendBtn.textContent = 'Send to Range';
+    bulkSendBtn.classList.remove('btn-danger');
+    bulkSendBtn.classList.add('btn-primary');
+    singleSendBtn.disabled = false;
+    previewRangeBtn.disabled = false;
+  });
+
+  previewRangeBtn.addEventListener('click', () => {
+    const start = rangeStart.value.trim();
+    const end = rangeEnd.value.trim();
+    const domain = emailDomain.value.trim();
+    try {
+      const emails = generateEmails(start, end, domain);
+      const preview = emails.slice(0, 15).join('\n');
+      alert(`Total recipients: ${emails.length}\n\nFirst 15:\n${preview}${emails.length > 15 ? `\n\n... and ${emails.length - 15} more` : ''}`);
+    } catch (err) { showToast(err.message, true); }
+  });
+
+  previewHtmlBtn.addEventListener('click', () => {
+    const html = htmlBody.value.trim();
+    if (!html) { showToast("HTML content is empty", true); return; }
+    previewPanel.style.display = 'block';
+    const doc = previewIframe.contentDocument || previewIframe.contentWindow.document;
+    doc.open();
+    doc.write(html);
+    doc.close();
+    showToast("Preview updated");
+  });
+
+  clearLogsBtn.addEventListener('click', () => { clearLogs(); showToast("Logs cleared"); });
+  addLog("System initialized • Professional bulk email suite ready", 'success');
+</script>
+</body>
+</html>
